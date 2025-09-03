@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-import { PrimerScreen } from './src/screens/PrimerScreen';
+//import { PrimerScreen } from './src/screens/PrimerScreen';
+import { MiPrimerDiseno } from './src/screens/MiPrimerDiseno';
 
 const App = () => {
 
@@ -8,9 +9,9 @@ const App = () => {
         <View
             style={{ flex: 1 }}
         >
-            <PrimerScreen/>
+            <MiPrimerDiseno/>
         </View>
-    )
+    );
 }
 
 export default App;
