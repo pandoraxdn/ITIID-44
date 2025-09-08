@@ -1,7 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
 //import { PrimerScreen } from './src/screens/PrimerScreen';
-import { MiPrimerDiseno } from './src/screens/MiPrimerDiseno';
+//import { MiPrimerDiseno } from './src/screens/MiPrimerDiseno';
+//import { PrimerComponente } from './src/screens/PrimerComponente';
+//import { ContadorScreen } from './src/screens/ContadorScreen';
+import { ComponenteStyle } from './src/screens/ComponenteStyle';
 
 const App = () => {
 
@@ -9,7 +12,7 @@ const App = () => {
         <View
             style={{ flex: 1 }}
         >
-            <MiPrimerDiseno/>
+            <ComponenteStyle/>
         </View>
     );
 }
