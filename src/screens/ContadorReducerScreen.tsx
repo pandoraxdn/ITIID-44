@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { BtnTouch } from '../components/BtnTouch';
-import { customContador } from '../hooks/customContador';
+import { customReducerContador, AuthReducer } from '../hooks/customReducerContador';
 
-export const ContadorScreen = () => {
+export const ContadorReducerScreen = () => {
 
-    const initialValue: number = 10;
+    const initialState: AuthReducer = {
+        count: 10
+    }
 
-    const { contador, add, reset, dec } = customContador(initialValue);
+    const { estado, add, add2, reset, dec, dec2 } = customReducerContador( initialState );
 
     return(
         <View
@@ -16,12 +18,17 @@ export const ContadorScreen = () => {
             <Text
                 style={ style.text }
             >
-                ContadorScreen: { contador }
+                ContadorScreen: { estado.count }
             </Text>
             <BtnTouch
                 titulo='añadir'
                 color='blue'
                 action={ () => add() }
+            />
+            <BtnTouch
+                titulo='añadir +2'
+                color='blue'
+                action={ () => add2() }
             />
             <BtnTouch
                 titulo='reiniciar'
@@ -32,6 +39,11 @@ export const ContadorScreen = () => {
                 titulo='decrementar'
                 color='violet'
                 action={ () => dec() }
+            />
+            <BtnTouch
+                titulo='decrementar -2'
+                color='violet'
+                action={ () => dec2() }
             />
         </View>
     )
