@@ -3,26 +3,28 @@ import { View, Text, StyleSheet } from 'react-native';
 import { RootStackParams } from '../../navigator/StackNav';
 import { StackScreenProps } from '@react-navigation/stack';
 import { BtnTouch } from '../../components/BtnTouch';
-import { Fab } from '../../components/Fab';
 
-interface Props extends StackScreenProps<RootStackParams,"ScreenII">{};
+interface Props extends StackScreenProps<RootStackParams,"UserScreen">{};
 
-export const ScreenIII = ( { navigation }:Props ) => {
+export const UserScreen = ( { navigation, route } :Props ) => {
+
+    const { username, id_user, status } = route.params;
 
     return(
         <View
             style={ style.root }
         >
             <Text>
-                ScreenIII
+                Username: {username}
             </Text>
-            <Fab
-                titulo='<-'
-                position="button_left"
-                action={() => navigation.navigate("ScreenII")}
-            />
+            <Text>
+                Id_user: {id_user}
+            </Text>
+            <Text>
+                Status: {( status ) ? "Activo" : "Inactivo" }
+            </Text>
             <BtnTouch
-                titulo='Incio'
+                titulo='<-'
                 color='pink'
                 action={() => navigation.popToTop()}
             />
