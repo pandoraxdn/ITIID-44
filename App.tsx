@@ -1,7 +1,8 @@
 import React from 'react';
 //import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { StackNav } from './src/navigator/StackNav';
+import { PokemonNavigator } from './src/navigator/PokemonNavigator';
+//import { StackNav } from './src/navigator/StackNav';
 //import { PrimerScreen } from './src/screens/PrimerScreen';
 //import { MiPrimerDiseno } from './src/screens/MiPrimerDiseno';
 //import { PrimerComponente } from './src/screens/PrimerComponente';
@@ -13,7 +14,7 @@ const App = () => {
 
     return(
         <NavigationContainer>
-            <StackNav/>
+            <PokemonNavigator/>
         </NavigationContainer>
     );
 }
