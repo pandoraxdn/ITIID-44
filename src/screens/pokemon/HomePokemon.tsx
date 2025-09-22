@@ -16,11 +16,23 @@ export const HomePokemon = () => {
                 keyExtractor={ (pokemon, index) => `${pokemon.id}${index}` }
                 // Header
                 ListHeaderComponent={(
-                    <Text
-                        style={{ fontSize: 60, marginHorizontal: 10 }}
-                    >
-                        Pokedex
-                    </Text>
+                    <View>
+                        <Image
+                            source={ require("./../../../assets/pokeball-dark.png") }
+                            style={{
+                                width: 300,
+                                height: 300,
+                                position: "absolute",
+                                top: -100,
+                                right: -100,
+                            }}
+                        />
+                        <Text
+                            style={{ fontSize: 60, marginHorizontal: 10 }}
+                        >
+                            Pokedex
+                        </Text>
+                    </View>
                 )}
                 // Body
                 showsVerticalScrollIndicator={false}

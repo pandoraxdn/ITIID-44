@@ -1,8 +1,10 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { HomePokemon } from "../screens/pokemon/HomePokemon";
+import { PokemonScreen } from "../screens/pokemon/PokemonScreen";
 
 export type RootStackParams = {
     HomePokemon:    undefined;
+    PokemonScreen:  { id: number, name: string, picture: string, url: string };
 }
 
 export const PokemonNavigator = () => {
@@ -20,7 +22,10 @@ export const PokemonNavigator = () => {
             <Stack.Screen
                 name="HomePokemon"
                 component={ HomePokemon }
-                options={{ title: "Pantalla incial" }}
+            />
+            <Stack.Screen
+                name="PokemonScreen"
+                component={ PokemonScreen }
             />
         </Stack.Navigator>
     );

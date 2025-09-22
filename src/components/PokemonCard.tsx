@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useTypeColorPokemon } from '../hooks/useTypeColorPokemon';
 
 interface Props{
@@ -9,47 +10,53 @@ interface Props{
     url:        string;
 }
 
-export const PokemonCard = ( { id, name, picture } :Props ) => {
+export const PokemonCard = ( { id, name, picture, url } :Props ) => {
 
     const widthDimensions = Dimensions.get("window").width;
+
+    const navigation = useNavigation();
 
     const { isLoading, color } = useTypeColorPokemon( id );
 
     return(
-        <View
-            style={{
-                ...style.cardContainer,
-                width: widthDimensions * 0.4,
-            }}
+        <TouchableOpacity
+            onPress={ () => navigation.navigate("PokemonScreen", { id, name, picture, url} ) }
         >
             <View
                 style={{
-                    ...style.backgroundTop,
-                    backgroundColor: (isLoading) ? "gray" : (color.length > 1) ? color[1] : color[0]
+                    ...style.cardContainer,
+                    width: widthDimensions * 0.4,
                 }}
-            />
-            <View
-                style={{
-                    ...style.backgroundButtom,
-                    backgroundColor: (isLoading) ? "gray" : color[0]
-                }}
-            />
-            <Image
-                style={ style.pokeball }
-                source={ require("./../../assets/pokeball-light.png") }
-            />
-            <Image
-                style={ style.pokemon }
-                source={{ uri: picture }}
-            />
-            <Text
-                style={ style.name }
             >
-                { `${name}` }
-                { `\n#${id}` }
-            </Text>
-        </View>
-    )
+                <View
+                    style={{
+                        ...style.backgroundTop,
+                        backgroundColor: (isLoading) ? "gray" : (color.length > 1) ? color[1] : color[0]
+                    }}
+                />
+                <View
+                    style={{
+                        ...style.backgroundButtom,
+                        backgroundColor: (isLoading) ? "gray" : color[0]
+                    }}
+                />
+                <Image
+                    style={ style.pokeball }
+                    source={ require("./../../assets/pokeball-light.png") }
+                />
+                <Image
+                    style={ style.pokemon }
+                    source={{ uri: picture }}
+                />
+                <Text
+                    style={ style.name }
+                >
+                    { `${name}` }
+                    { `\n#${id}` }
+                </Text>
+            </View>
+        </TouchableOpacity>
+    );
 }
 
 const style = StyleSheet.create({
@@ -88,7 +95,7 @@ const style = StyleSheet.create({
         ]
     },
     name: {
-        color: "black",
+        color: "white",
         fontSize: 18,
         marginHorizontal: 10
     },
