@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { pokeApi } from "../api/pokeApi";
 import { PokemonSimple, Type } from "../interfaces/pokemonInterfaces";
 
-interface TypePokemon{
+export interface TypePokemon{
     name: string;
     color: string;
 }

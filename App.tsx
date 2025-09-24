@@ -9,6 +9,9 @@ import { PokemonNavigator } from './src/navigator/PokemonNavigator';
 //import { ContadorScreen } from './src/screens/ContadorScreen';
 //import { ComponenteStyle } from './src/screens/ComponenteStyle';
 //import { ContadorReducerScreen } from './src/screens/ContadorReducerScreen';
+//import { MiPrimerScreen } from './src/screens/MiPrimerScreen-maestro';
+//import { MiPrimerDiseno } from './src/screens/MiPrimerDiseno-maestro';
+//import { MiPrimerContador } from './src/screens/MiPrimerContador-maestro';
 
 const App = () => {
 
