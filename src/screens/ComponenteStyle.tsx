@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
+import { appTheme } from '../themes/appTheme';
 
 export const ComponenteStyle = () => {
 
@@ -21,7 +22,7 @@ export const ComponenteStyle = () => {
 
     return(
         <View
-            style={style.root}
+            style={appTheme.marginGlobal}
         >
             <View
                 style={{
@@ -90,13 +91,6 @@ export const ComponenteStyle = () => {
 }
 
 const style = StyleSheet.create({
-    root:{
-        flex: 1,
-        flexDirection: "column",
-        alignContent: "center",
-        justifyContent: "space-evenly",
-        backgroundColor: "rgb(76, 144, 176)"
-    },
     photo: {
         width: 95,
         height: 95,
