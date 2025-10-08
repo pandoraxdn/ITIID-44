@@ -1,30 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TextInput } from 'react-native';
-import { appTheme } from '../themes/appTheme';
-import { BtnTouch } from '../components/BtnTouch';
-import { useForm } from '../hooks/useForm';
+import { appTheme } from '../../themes/appTheme';
+import { BtnTouch } from '../../components/BtnTouch';
+import { useTareaForm } from '../../hooks/useTareaForm';
+import { StackScreenProps } from '@react-navigation/stack';
+import { RootStackParams } from '../../navigator/TareaNavigator';
 
-export const FormScreen = () => {
+interface Props extends StackScreenProps<RootStackParams,"FormScreen">{};
 
-    const { form, formList, handleInputChange, handleSubmit } = useForm();
+export const FormScreen = ( { navigation, route } :Props ) => {
+
+    const { state, handleInputChange, handleSubmit, handleDelete } = useTareaForm();
+
+    useEffect(() => {
+        const tarea = route.params;
+        handleInputChange("id_tarea", tarea.id_tarea);
+        handleInputChange("nombre", tarea.nombre);
+        handleInputChange("materia", tarea.materia);
+        handleInputChange("fecha", tarea.fecha);
+        handleInputChange("prioridad", String(tarea.prioridad));
+    },[]);
 
     return(
         <View
             style={ appTheme.marginGlobal }
         >
-            {
-                (formList.length > 0) &&
-                (
-                    <Text>
-                        { JSON.stringify(formList) }
-                    </Text>
-                )
-            }
             <Text
                 style={ appTheme.title }
             >
                 Formulario de tareas
             </Text>
+            { ( state.id_tarea != 0 ) && (
+                <BtnTouch
+                    titulo='Borrar Tarea'
+                    color='red'
+                    action={() => {
+                        handleDelete();
+                        navigation.popToTop();
+                    }}
+                />)
+            }
             <View
                 style={ appTheme.container }
             >
@@ -43,8 +58,8 @@ export const FormScreen = () => {
                 <TextInput
                     style={ appTheme.textInput }
                     placeholder='Nombre de la tarea'
-                    value={ form.tarea }
-                    onChangeText={ (value) => handleInputChange("tarea",value) }
+                    value={ state.nombre }
+                    onChangeText={ (value) => handleInputChange("nombre",value) }
                 />
                 <Text
                     style={{
@@ -61,7 +76,7 @@ export const FormScreen = () => {
                 <TextInput
                     style={ appTheme.textInput }
                     placeholder='Fecha de la tarea'
-                    value={ form.fecha }
+                    value={ state.fecha }
                     onChangeText={ (value) => handleInputChange("fecha",value) }
                 />
                 <Text
@@ -79,7 +94,7 @@ export const FormScreen = () => {
                 <TextInput
                     style={ appTheme.textInput }
                     placeholder='Materia de la Tarea'
-                    value={ form.materia }
+                    value={ state.materia }
                     onChangeText={ (value) => handleInputChange("materia",value) }
                 />
                 <Text
@@ -97,13 +112,21 @@ export const FormScreen = () => {
                 <TextInput
                     style={ appTheme.textInput }
                     placeholder='Prioridad de la Tarea'
-                    value={ form.prioridad }
+                    value={ String( state.prioridad )}
                     onChangeText={ (value) => handleInputChange("prioridad",value) }
                 />
                 <BtnTouch
                     titulo='Guardar tarea'
                     color='violet'
-                    action={ () => handleSubmit() }
+                    action={ () => {
+                        handleSubmit();
+                        navigation.popToTop();
+                    }}
+                />
+                <BtnTouch
+                    titulo='Regresar'
+                    color='violet'
+                    action={ () => navigation.popToTop() }
                 />
             </View>
         </View>

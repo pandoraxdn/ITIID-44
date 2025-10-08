@@ -30,5 +30,31 @@ export const appTheme = StyleSheet.create({
         borderWidth: 5,
         borderColor: "violet",
         color: "black"
+    },
+    avatar: {
+        height: 100,
+        width: 100,
+        borderRadius: 100,
+        borderWidth: 5,
+        borderColor: "violet"
+    },
+    menuContainer:{
+        alignItems: "center",
+        marginHorizontal: 10,
+        marginVertical: 10
+    },
+    menuBtn:{
+        marginVertical: 10,
+        borderWidth: 2,
+        borderRadius: 10,
+        width: 180,
+        justifyContent: "center",
+        borderColor: "violet"
+    },
+    textBtn:{
+        fontSize: 20,
+        color: "black",
+        fontWeight: "bold",
+        textAlign: "center",
     }
 });
