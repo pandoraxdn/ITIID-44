@@ -4,11 +4,15 @@ import { PokemonNavigator } from "./PokemonNavigator";
 import { TareaNavigator } from "./TareaNavigator";
 import { useWindowDimensions } from "react-native";
 import { DrawerMenu } from "../components/DrawerMenu";
+import { ImagePickerScreen } from "../screens/ImagePickerScreen";
+import { UserNavigator } from "./UserNavigator";
 
 export type RootDrawerNavigator = {
     StackNav: undefined;
     PokemonNavigator: undefined;
     TareaNavigator: undefined;
+    ImagePickerScreen: undefined;
+    UserNavigator:  undefined;
 }
 
 const Navigator = () => {
@@ -41,6 +45,14 @@ const Navigator = () => {
             <Drawer.Screen
                 name="TareaNavigator"
                 component={TareaNavigator}
+            />
+            <Drawer.Screen
+                name="ImagePickerScreen"
+                component={ImagePickerScreen}
+            />
+            <Drawer.Screen
+                name="UserNavigator"
+                component={UserNavigator}
             />
         </Drawer.Navigator>
     );

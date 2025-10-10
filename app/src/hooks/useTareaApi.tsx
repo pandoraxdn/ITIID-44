@@ -16,7 +16,7 @@ export const useTareaApi = (): UseTareaApi => {
     const [ isLoading, setIsLoading ] = useState<boolean>( false );
     const [ listTarea, setListTarea ] = useState<TareaResponse>({} as TareaResponse);
 
-    const apiUrl: string = "http://192.168.1.24:3000/api/dsm44/tarea";
+    const apiUrl: string = "http://10.172.189.74:3000/api/dsm44/tarea";
 
     const loadTarea = async () => {
         setIsLoading( true );
