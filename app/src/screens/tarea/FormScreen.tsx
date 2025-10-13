@@ -130,5 +130,5 @@ export const FormScreen = ( { navigation, route } :Props ) => {
                 />
             </View>
         </View>
-    )
+    );
 }

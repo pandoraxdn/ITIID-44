@@ -1,4 +1,4 @@
-import Reactm,{ useState, useEffect } from 'react';
+import React,{ useState, useEffect } from 'react';
 import * as ImagePicker from "expo-image-picker";
 import { File } from 'expo-file-system';
 import { View, Text, Alert, Image } from 'react-native';
@@ -29,9 +29,9 @@ export const ImagePickerScreen = () => {
             quality: 0.9
         });
 
-        (!result.canceled) && ( async () => {
+        (!result.canceled) && (() => {
             const file = new File( result.assets[0].uri );
-            const base64 = await file.base64();
+            const base64 = file.base64Sync();
             setImagen64(base64);
         })();
     }

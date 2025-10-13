@@ -16,7 +16,7 @@ export const useUserApi = (): UseUserApi => {
 
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
     const [ listUser, setListUser ] = useState<UserResponse>({} as UserResponse);
-    const urlApi = "http://10.172.189.74:3000/api/dsm44/usuarios";
+    const urlApi = "http://192.168.34.193:3000/api/dsm44/usuarios";
 
     const loadUsers = async () => {
         setIsLoading(true);
@@ -31,23 +31,23 @@ export const useUserApi = (): UseUserApi => {
 
     const createUser = async ( data: FormUserData ) => {
         const dataBody = {
-            username: data.username,
-            image: data.image,
-            password: data.password,
-            email: data.email,
+            username:       data.username,
+            password:       data.password,
+            email:          data.email,
+            image:          data.image,
         } 
         await pandorApi.post(urlApi, dataBody);
     }
 
-    const updateUser = async ( data: FormUserData ) => {
+    const updateUser = async (data: FormUserData) => {
         const dataBody = {
             username: data.username,
-            image: data.image,
-            password: data.password,
             email: data.email,
-        } 
-        await pandorApi.patch(urlApi + `/${data.id_user}`, dataBody);
-    }
+            image: data.image,
+            ...(data.password && { password: data.password }),
+        }
+        await pandorApi.patch(`${urlApi}/${data.id_user}`, dataBody);
+    };
 
     const deleteUser = async ( data: FormUserData ) => {
         await pandorApi.delete(urlApi + `/${data.id_user}`);

@@ -1,6 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { json, urlencoded } from 'body-parser';
+import { networkInterfaces } from 'os';
+
+const getLocalIp = () =>
+  Object.values(networkInterfaces())
+    .flat()
+    .find(i => i?.family === 'IPv4' && !i.internal)?.address || 'localhost';
 
 const capibara = async () => {
   const app = await NestFactory.create(AppModule);
@@ -14,8 +20,9 @@ const capibara = async () => {
   });
   app.use(json({limit: "100mb"}));
   app.use(urlencoded({ limit: '100mb', extended: true }));
-  app.setGlobalPrefix("api/dsm44")
+  app.setGlobalPrefix("api/dsm44");
   await app.listen(3000);
+  console.log(`API: http://${getLocalIp()}:3000`);
 }
 
 capibara();
