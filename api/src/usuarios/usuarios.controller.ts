@@ -26,27 +26,27 @@ export class UsuariosController {
 
   @Post()
   async create(@Body( new ValidationPipe ) createUsuarioDto: CreateUsuarioDto) {
-    return this.usuariosService.create(createUsuarioDto);
+    return await this.usuariosService.create(createUsuarioDto);
   }
 
   @Patch(':id_user')
   async update(@Param('id_user') id_user: number, @Body( new ValidationPipe ) updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuariosService.update(id_user, updateUsuarioDto);
+    return await this.usuariosService.update(id_user, updateUsuarioDto);
   }
 
   @Get()
   async findAll() {
-    return this.usuariosService.findAll();
+    return await this.usuariosService.findAll();
   }
 
   @Get(':id_user')
   async findOne(@Param('id_user') id_user: number) {
-    return this.usuariosService.findOne(id_user);
+    return await this.usuariosService.findOne(id_user);
   }
 
   @Delete(':id_user')
   async remove(@Param('id_user') id_user: number) {
-    return this.usuariosService.remove(id_user);
+    return await this.usuariosService.remove(id_user);
   }
 
 }

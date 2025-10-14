@@ -22,7 +22,7 @@ const capibara = async () => {
   app.use(urlencoded({ limit: '100mb', extended: true }));
   app.setGlobalPrefix("api/dsm44");
   await app.listen(3000);
-  console.log(`API: http://${getLocalIp()}:3000`);
+  console.log(`http://${getLocalIp()}:3000`);
 }
 
 capibara();

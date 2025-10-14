@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 import { View, Text, StyleSheet } from 'react-native';
 import { RootStackParams } from '../../navigator/StackNav';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -14,6 +15,8 @@ interface User{
 }
 
 export const ScreenI = ( { navigation } : Props ) => {
+
+    const { authState, signIn, logout, changeUsername } = useContext( AuthContext );
     
     const usuario: User = {
         username:   "Chucho Ivan",
@@ -34,6 +37,16 @@ export const ScreenI = ( { navigation } : Props ) => {
             <Text>
                 ScreenI
             </Text>
+            <BtnTouch
+                titulo={ (authState.isLoggedIn) ? "Cerrar sesión" : "Iniciar sesión" }
+                color={ (authState.isLoggedIn) ? "red" : "violet" }
+                action={ () => (authState.isLoggedIn) ? logout() : signIn() }
+            />
+            <BtnTouch
+                titulo="Cambiar de username"
+                color='violet'
+                action={ () => changeUsername("Rita Karla Rubí") }
+            />
             <Fab
                 titulo='->'
                 position="button_right"

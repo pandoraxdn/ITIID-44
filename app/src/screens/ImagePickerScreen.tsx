@@ -1,4 +1,5 @@
-import React,{ useState, useEffect } from 'react';
+import React,{ useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import * as ImagePicker from "expo-image-picker";
 import { File } from 'expo-file-system';
 import { View, Text, Alert, Image } from 'react-native';
@@ -6,6 +7,8 @@ import { appTheme } from '../themes/appTheme';
 import { BtnTouch } from '../components/BtnTouch';
 
 export const ImagePickerScreen = () => {
+
+    const { changeFavoriteImage } = useContext( AuthContext );
 
     const [ imagen64, setImagen64 ] = useState<string|null>(null);
 
@@ -32,7 +35,8 @@ export const ImagePickerScreen = () => {
         (!result.canceled) && (() => {
             const file = new File( result.assets[0].uri );
             const base64 = file.base64Sync();
-            setImagen64(base64);
+            setImagen64( base64 );
+            changeFavoriteImage( base64 );
         })();
     }
 

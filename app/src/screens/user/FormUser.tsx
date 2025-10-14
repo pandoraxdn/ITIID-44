@@ -107,7 +107,7 @@ export const FormUser = ( { navigation, route } :Props ) => {
                 />
                 <BtnTouch
                     titulo='Seleccionar imagen'
-                    color='#27EBF5'
+                    color='olive'
                     action={ () => pickImage() }
                 />
                 { ( state.image ) && (
