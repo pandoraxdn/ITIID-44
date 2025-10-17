@@ -48,7 +48,7 @@ export const LoginScreen = () => {
             >
                 <Animated.View
                   style={{
-                    borderWidth: 10,
+                    borderWidth: 20,
                     borderRadius: 30,
                     borderColor: animatedBorderColor
                   }}
@@ -68,7 +68,7 @@ export const LoginScreen = () => {
                     <ActivityIndicator 
                         style={{ height: 100 }}
                         size={ 100 }
-                        color="purple"
+                        color="violet"
                     />
                 }
                 {

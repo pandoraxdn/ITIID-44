@@ -44,13 +44,14 @@ export const useLoginUser = (): UseLoginUser => {
 
     const { signIn, changeFavoriteImage, changeUsername, changeEmail } = useContext( AuthContext );
 
-    const apiURl: string = "http://192.168.1.24:3000/api/dsm44/usuarios/login";
+    const apiURl: string = "http://192.168.1.101:3000/api/dsm44/usuarios/login";
 
     const handleInputChange = ( fieldName: keyof LoginData, value: string ) => {
         dispatch({ type: "handleInputChange", payload: { fieldName, value } });
     }
 
     const handleLogin = async () => {
+
         setIsLoading(true);
 
         const dataBody = {
