@@ -71,6 +71,6 @@ export const DrawerNavigator = () => {
 
     const { authState } = useContext(AuthContext);
 
-    return ( authState.isLoggedIn ) ? <DrawerNavigator/> : <LoginScreen/>;
+    return ( authState.isLoggedIn ) ? <Navigator/> : <LoginScreen/>;
 
 }

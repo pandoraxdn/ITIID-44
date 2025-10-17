@@ -3,7 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import { RequestLogin } from "../interfaces/userInterfaces";
 import { pandorApi } from "../api/pandoraApi";
 
-export interface LoginData{
+export interface LoginData {
     email: string;
     password: string;
 }
@@ -44,7 +44,7 @@ export const useLoginUser = (): UseLoginUser => {
 
     const { signIn, changeFavoriteImage, changeUsername, changeEmail } = useContext( AuthContext );
 
-    const apiURl: string = "http://192.168.1.101:3000/api/dsm44/usuarios/login";
+    const apiURl: string = "http://192.168.1.24:3000/api/dsm44/usuarios/login";
 
     const handleInputChange = ( fieldName: keyof LoginData, value: string ) => {
         dispatch({ type: "handleInputChange", payload: { fieldName, value } });
@@ -52,24 +52,29 @@ export const useLoginUser = (): UseLoginUser => {
 
     const handleLogin = async () => {
         setIsLoading(true);
+
         const dataBody = {
             email: state.email,
-            password: state.password
-        } 
-        try{
+            password: state.password,
+        };
+
+        try {
             const response = await pandorApi.post<RequestLogin>(apiURl, dataBody);
-            ( response.data !== false ) && ( () => {
-                signIn();
-                changeUsername( response.data.username );
-                changeEmail( response.data.email );
-                changeFavoriteImage( response.data.image );
+
+            (response.data) && (() => {
+              signIn();
+              response.data?.username && changeUsername(response.data.username);
+              response.data?.email && changeEmail(response.data.email);
+              response.data?.image && changeFavoriteImage(response.data.image);
             })();
-        }catch(error){
-            console.log( error );
+
+        } catch (error) {
+            console.error('Error en login:', error);
             setRequest(false);
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
-    }
+    };
 
     return { isLoading, state, handleLogin, handleInputChange, request };
 
