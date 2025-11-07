@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { StackNav } from "./StackNav";
 import { PokemonNavigator } from "./PokemonNavigator";
@@ -10,14 +8,18 @@ import { ImagePickerScreen } from "../screens/ImagePickerScreen";
 import { UserNavigator } from "./UserNavigator";
 import { SettingsScreen } from "../screens/SettingsScreen";
 import { LoginScreen } from "../screens/user/LoginScreen";
+import { GraficosScreen } from "../screens/char/GraficosScreen";
+import { SensorData } from "../screens/char/SensorData";
 
 export type RootDrawerNavigator = {
-    StackNav: undefined;
-    PokemonNavigator: undefined;
-    TareaNavigator: undefined;
-    ImagePickerScreen: undefined;
-    UserNavigator:  undefined;
-    SettingsScreen: undefined;
+    StackNav:           undefined;
+    PokemonNavigator:   undefined;
+    TareaNavigator:     undefined;
+    ImagePickerScreen:  undefined;
+    UserNavigator:      undefined;
+    SettingsScreen:     undefined;
+    GraficosScreen:     undefined;
+    SensorData:         undefined;
 }
 
 const Navigator = () => {
@@ -63,14 +65,24 @@ const Navigator = () => {
                 name="SettingsScreen"
                 component={SettingsScreen}
             />
+            <Drawer.Screen
+                name="GraficosScreen"
+                component={GraficosScreen}
+            />
+            <Drawer.Screen
+                name="SensorData"
+                component={SensorData}
+            />
         </Drawer.Navigator>
     );
 }
 
 export const DrawerNavigator = () => {
 
-    const { authState } = useContext( AuthContext );
+    return <Navigator/>;
 
-    return ( authState.isLoggedIn ) ? <Navigator/> : <LoginScreen/>;
+    //const { authState } = useContext( AuthContext );
+
+    //return ( authState.isLoggedIn ) ? <Navigator/> : <LoginScreen/>;
 
 }

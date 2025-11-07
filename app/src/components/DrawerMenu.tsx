@@ -121,6 +121,32 @@ export const DrawerMenu = ( { navigation }:DrawerContentComponentProps ) => {
                             </Text>
                         </View>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={ () => navigation.navigate("GraficosScreen") }
+                    >
+                        <View
+                            style={appTheme.menuBtn}
+                        >
+                            <Text
+                                style={appTheme.textBtn}
+                            >
+                                Graficos
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={ () => navigation.navigate("SensorData") }
+                    >
+                        <View
+                            style={appTheme.menuBtn}
+                        >
+                            <Text
+                                style={appTheme.textBtn}
+                            >
+                                Graficos Sensor
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
             </View>
         </DrawerContentScrollView>
