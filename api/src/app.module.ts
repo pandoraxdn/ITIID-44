@@ -8,6 +8,10 @@ import { Tarea } from './tareas/entities/tarea.entity';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { Usuario } from './usuarios/entities/usuario.entity';
 import { SensorModule } from './sensor/sensor.module';
+import { Empleado } from './empleados/entities/empleado.entity';
+import { RegistroAsistencia } from './empleados/entities/registro-asistencia.entity';
+import { RegistroProduccion } from './empleados/entities/registro-produccion.entity';
+import { EmpleadosModule } from './empleados/empleados.module';
 
 @Module({
     imports: [
@@ -34,9 +38,21 @@ import { SensorModule } from './sensor/sensor.module';
             synchronize: true,
             autoLoadEntities: true,
         }),
+        TypeOrmModule.forRoot({
+            type: "postgres",
+            host: "localhost",
+            port: 5432,
+            username: "najimi",
+            password: "pass",
+            database: "empresadsm44",
+            entities:  [ Empleado, RegistroAsistencia, RegistroProduccion ],
+            synchronize: true,
+            autoLoadEntities: true,
+        }),
         TareaModule,
         UsuariosModule,
-        SensorModule
+        SensorModule,
+        EmpleadosModule
     ],
   controllers: [AppController],
   providers: [AppService],

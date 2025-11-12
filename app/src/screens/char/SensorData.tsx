@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Dimensions, ScrollView, RefreshControl } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, Dimensions, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useSensorData } from '../../hooks/useSensorData';
 import { appTheme } from '../../themes/appTheme';
@@ -8,9 +8,13 @@ export const SensorData = () => {
 
     const { isLoading, data, today, yesterday, beforeYesterday, loadData } = useSensorData();
 
+    useEffect(() => {
+        if (!data || !today) loadData();
+    }, []);
+
     const chartConfig = {
         backgroundColor: "black",
-        backgroundGradientFrom: "black",
+        backgroundGradientFrom: "blue",
         backgroundGradientTo: "white",
         decimalPlaces: 2,
         color: (opacity = 1) => `rgba(255,255,255,${opacity})`,
@@ -28,17 +32,22 @@ export const SensorData = () => {
     const height = Dimensions.get("window").height;
     const width = Dimensions.get("window").width;
 
+    if (isLoading) return <ActivityIndicator color="black" size={80}/>;
+
     return(
-        <ScrollView
-            refreshControl={
-                <RefreshControl 
-                    onRefresh={ loadData } 
-                    refreshing={ !isLoading }
-                />
-            }
+        <View
+            style={ appTheme.marginGlobal }
         >
-            <View
-                style={ appTheme.marginGlobal }
+            <ScrollView
+                contentContainerStyle={{
+                    flexGrow: 1
+                }}
+                refreshControl={
+                    <RefreshControl 
+                        onRefresh={ loadData } 
+                        refreshing={ isLoading }
+                    />
+                }
             >
                 <View
                     style={ appTheme.container }
@@ -56,11 +65,11 @@ export const SensorData = () => {
                     <Text
                         style={ appTheme.title }
                     >
-                        Temperatura max: { (!isLoading) && today.max }
+                        Temperatura max: { (!isLoading) && today?.max }
                         { `\n` }
-                        Temperatura min: { (!isLoading) && today.min }
+                        Temperatura min: { (!isLoading) && today?.min }
                     </Text>
-                    { data && today?.values && (
+                    { today?.values?.length > 0 && today?.labels?.length > 0 && (
                       <LineChart
                         data={{
                           labels: today.labels,
@@ -88,7 +97,7 @@ export const SensorData = () => {
                         { `\n` }
                         Temperatura min: { (!isLoading) && yesterday.min }
                     </Text>
-                    { data && yesterday?.values && (
+                    { yesterday?.values?.length > 0 && yesterday?.labels?.length > 0 && (
                       <LineChart
                         data={{
                           labels: yesterday.labels,
@@ -116,7 +125,7 @@ export const SensorData = () => {
                         { `\n` }
                         Temperatura min: { (!isLoading) && beforeYesterday.min }
                     </Text>
-                    { data && beforeYesterday?.labels && (
+                    { beforeYesterday?.values?.length > 0 && beforeYesterday?.labels?.length > 0 && (
                       <LineChart
                         data={{
                           labels: beforeYesterday.labels,
@@ -129,7 +138,7 @@ export const SensorData = () => {
                       />
                     )}
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 }
