@@ -6,9 +6,9 @@ import { Usuario } from './entities/usuario.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([
-            Usuario
-        ])
+        TypeOrmModule.forFeature(
+            [Usuario], "conexion-postgres"
+        )
     ],
     controllers: [UsuariosController],
     providers: [UsuariosService],
