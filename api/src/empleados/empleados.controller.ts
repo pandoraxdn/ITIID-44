@@ -65,4 +65,11 @@ export class EmpleadosController {
     createProduccion(@Param("id_empleado") id_empleado: number, @Param("unidadesProducidas") unidadesProducidas: number){
         return this.createProduccion(id_empleado, unidadesProducidas);
     }
+
+    @Get("asistenciadiaria")
+    asistenciaDiaria(
+        @Query('fecha') fecha: Date = new Date(),
+    ){
+        return this.empleadosService.asistenciaDiaria( fecha );
+    }
 }

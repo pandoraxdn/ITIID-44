@@ -61,12 +61,28 @@ export class EmpleadosService {
     }
 
     async findAllEmpleado(page: number = 1, limit: number = 10, baseUrl: string) {
-        const [data, total] = await this.repoEmpleado.findAndCount({
-            relations: ["produccion", "asistencia"],
-            skip: (page - 1) * limit,
-            take: limit,
-            order: { id_empleado: "ASC" },
-        });
+        const [data, total] = await this.repoEmpleado
+            .createQueryBuilder("e")
+            .skip( (page - 1) * limit )
+            .take(limit)
+            .orderBy("e.id_empleado", "ASC")
+            .getManyAndCount();
+
+        for (const empleado of data) {
+            empleado.produccion = await this.repoProduccion
+                .createQueryBuilder("p")
+                .where("p.id_empleado = :id", { id: empleado.id_empleado })
+                .orderBy("p.id_reg_p", "DESC")
+                .limit(5)
+                .getMany();
+
+            empleado.asistencia = await this.repoAsistencia
+                .createQueryBuilder("a")
+                .where("a.id_empleado = :id", { id: empleado.id_empleado })
+                .orderBy("a.fecha", "DESC")
+                .limit(5)
+                .getMany();
+        }
 
         const totalPages = Math.ceil( total/limit );
 
@@ -169,6 +185,10 @@ export class EmpleadosService {
         });
 
         return await this.repoProduccion.save( produccion );
+    }
+
+    async asistenciaDiaria( fecha: Date = new Date ){
+        return await this.repoAsistencia.find({ where: { fecha } });
     }
 
 }
