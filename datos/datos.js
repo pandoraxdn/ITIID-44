@@ -3,13 +3,11 @@ const axios = require("axios");
 const API_BASE = "http://localhost:3000/api/dsm44";
 const TOTAL_EMPLEADOS = 8000;
 const YEAR = 2025;
-const BATCH_SIZE = 20;
+const EMPLEADOS = [];
 
 const AREAS = ["OFICINA", "PRODUCCION", "INVENTARIO"];
 const TURNOS = ["MATUTINO", "VESPERTINO", "NOCTURNO", "MIXTO"];
 const STATUS_ASISTENCIA = ["EN_TURNO", "FINALIZADO"];
-
-function random(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 const NOMBRES = [
   "Juan","Carlos","Luis","Miguel","Jose","Jorge","Felipe","Hector",
@@ -29,18 +27,19 @@ const APELLIDOS = [
   "Arias","Palacios","Estrada","Valdez","Montoya","Ramos"
 ];
 
-function generarNombreCompleto() {
-  return {
-    nombre: random(NOMBRES),
-    apellido_p: random(APELLIDOS),
-    apellido_m: random(APELLIDOS)
-  };
+const random = ( arr ) => arr[Math.floor(Math.random() * arr.length)];
+
+const generarNombreCompleto = () => {
+    return {
+        nombre: random(NOMBRES),
+        apellido_p: random(APELLIDOS),
+        apellido_m: random(APELLIDOS)
+    }
 }
 
-function generarFechas2025() {
+const  generarFechas2025 = () => {
   const fechas = [];
   const start = new Date(`${YEAR}-01-01T00:00:00Z`);
-
   for (let d = 0; d < 365; d++) {
     const cur = new Date(start);
     cur.setUTCDate(cur.getUTCDate() + d);
@@ -48,96 +47,94 @@ function generarFechas2025() {
   }
   return fechas;
 }
+
 const FECHAS_2025 = generarFechas2025();
 
-function makeISO(fecha, hour, minute) {
+const makeISO = (fecha, hour, minute) => {
   const [y, m, d] = fecha.split("-").map(Number);
   return new Date(y, m - 1, d, hour, minute, 0).toISOString();
 }
+const safePost = async (url, body, maxIntentos = 10, delayMs = 1000) => {
+    let intento = 0;
 
-async function safePost(url, body) {
-  try {
-    const r = await axios.post(url, body, { validateStatus: s => true });
-    if (r.status >= 200 && r.status < 300) return r.data;
-    console.error(`Error ${r.status} -> ${url}`, r.data);
-    return null;
-  } catch (e) {
-    console.error(`Network error -> ${url}`, e.message);
-    return null;
-  }
-}
+    while (intento < maxIntentos) {
+        try {
+            return await axios.post(url, body);
+        } catch (e) {
+            intento++;
+            if (intento === maxIntentos) {
+                console.error(`Fallo Final después de ${maxIntentos} intentos -> ${url}:`, e.message);
+                return null;
+            }
+            console.warn(`Error de red (Intento ${intento}/${maxIntentos}) -> ${url}. Reintentando en ${delayMs}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
+};
 
-async function runBatch(promises) {
-  const results = await Promise.allSettled(promises);
-  const fails = results.filter(r => r.status === "rejected" || r.value === null).length;
-
-  if (fails) {
-    console.warn(`⚠ Fallaron ${fails} de ${promises.length} requests`);
-  }
-}
-
-async function main() {
-
-  for (let i = 1; i <= TOTAL_EMPLEADOS; i++) {
-
-    const dataNombre = generarNombreCompleto();
-    const empleadoPayload = {
-      nombre: dataNombre.nombre,
-      apellido_p: dataNombre.apellido_p,
-      apellido_m: dataNombre.apellido_m,
-      area: random(AREAS),
+const registerA_P = async ( fecha, empleado ) => {
+    const entradaISO = makeISO(fecha, 8, 0);
+    const salidaISO = makeISO(fecha, 17, 0);
+    const fechaEntrada = new Date(entradaISO);
+    const fechaSalida = new Date(salidaISO);
+    const diferenciaEnMilisegundos = fechaSalida - fechaEntrada;
+    const diferenciaEnHoras = diferenciaEnMilisegundos / 3600000;
+    const register_asistencia = await safePost(`${API_BASE}/empleados/create-asistencia`, {
+        fecha,
+        horaEntrada: entradaISO,
+        horaSalida: salidaISO,
+        entrada: entradaISO,
+        salida: salidaISO,
+        status: random(STATUS_ASISTENCIA),
+        empleado: empleado,
+        horasTrabajadas: diferenciaEnHoras,
+    });
+    const register_produccion = await safePost(`${API_BASE}/empleados/create-produccion`, {
+      fecha,
       turno: random(TURNOS),
-      salarioDiario: 200 + Math.random() * 350,
-      activo: true
-    };
+      unidadesProducidas: Math.floor(Math.random() * 3000),
+      empleado: empleado
+    });
+    return {register_asistencia, register_produccion};
+}
 
-    const resEmpleado = await safePost(`${API_BASE}/empleados`, empleadoPayload);
-    const idEmpleado = resEmpleado?.id_empleado;
+const main = async() => {
 
-    if (!idEmpleado) {
-      console.error("No se pudo crear empleado", i);
-      continue;
-    }
+    for (let i = 1; i <= TOTAL_EMPLEADOS; i++) {
+        const dataNombre = generarNombreCompleto();
 
-    console.log(`Empleado ${i} creado ID=${idEmpleado}`);
-
-    let currentBatch = [];
-
-    for (const fecha of FECHAS_2025) {
-
-      currentBatch.push(
-        safePost(`${API_BASE}/empleados/create-asistencia`, {
-          fecha,
-          horaEntrada: makeISO(fecha, 8, 0),
-          horaSalida: makeISO(fecha, 17, 0),
-          entrada: makeISO(fecha, 8, 0),
-          salida: makeISO(fecha, 17, 0),
-          status: random(STATUS_ASISTENCIA),
-          empleado: idEmpleado
-        })
-      );
-
-      currentBatch.push(
-        safePost(`${API_BASE}/empleados/create-produccion`, {
-          fecha,
+        const empleadoPayload = {
+          nombre: dataNombre.nombre,
+          apellido_p: dataNombre.apellido_p,
+          apellido_m: dataNombre.apellido_m,
+          area: random(AREAS),
           turno: random(TURNOS),
-          piezas: Math.floor(Math.random() * 300),
-          empleado: idEmpleado
-        })
-      );
+          salarioDiario: 200 + Math.random() * 350,
+          activo: true
+        };
 
-      if (currentBatch.length >= BATCH_SIZE) {
-        await runBatch(currentBatch);
-        currentBatch = [];
-      }
+        const register = await safePost(`${API_BASE}/empleados`, empleadoPayload);
+
+        const data = register.data;
+
+        console.log(`Registro empleado ${data.id_empleado}: ${data.nombre} ${data.apellido_p} ${data.apellido_m}`);
+
+        EMPLEADOS.push(data.id_empleado);
     }
 
-    if (currentBatch.length > 0) {
-      await runBatch(currentBatch);
-    }
+    if( EMPLEADOS.length == 0 ) return null; 
 
-    console.log(`Completado ID ${idEmpleado}\n`);
-  }
+    for(const fecha of FECHAS_2025){
+        for ( const empleado of EMPLEADOS ){
+            let registros = await registerA_P(fecha, empleado);
+            if (registros?.register_asistencia && registros?.register_produccion){
+                let asistencia = registros.register_asistencia.data;
+                let produccion = registros.register_produccion.data;
+                console.log(`Registro asistencia ${asistencia.id_reg_a}: ${empleado} ${asistencia.fecha} ${asistencia.horaEntrada}`);
+                console.log(`Registro produccion ${produccion.id_reg_p}: ${empleado} ${produccion.fecha} ${produccion.unidadesProducidas}`);
+            }
+       }
+    }
 }
 
 main();
