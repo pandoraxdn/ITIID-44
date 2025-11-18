@@ -10,6 +10,7 @@ import { CreateRegistroAsistencia } from './dto/create-registro-asistencia.dto';
 import { CreateRegistroProduccion } from './dto/create-registro-produccion.dto';
 import { Turno } from './enum/turno.enum';
 import { StatusTurno } from './enum/status-turno.enum';
+import { Between } from 'typeorm';
 
 @Injectable()
 export class EmpleadosService {
@@ -27,6 +28,11 @@ export class EmpleadosService {
         [ Turno.VESPERTINO ]:   { inicio: "14:00", fin: "22:00" },
         [ Turno.NOCTURNO ]:     { inicio: "22:00", fin: "06:00" },
         [ Turno.MIXTO ]:        { inicio: "12:00", fin: "00:00" },
+    }
+
+    private convertirFecha( fecha: string ){
+        const [ day, month, year ] = fecha.split("/").map(Number);
+        return new Date(year,month -1, day);
     }
 
     async createRegistroAsistencia(data: CreateRegistroAsistencia) {
@@ -187,8 +193,118 @@ export class EmpleadosService {
         return await this.repoProduccion.save( produccion );
     }
 
-    async asistenciaDiaria( fecha: Date = new Date ){
-        return await this.repoAsistencia.find({ where: { fecha } });
+    async getAsistencia( id_empleado: number, fechaInicio: string, fechaFin: string ){
+        // http://localhost:3000/api/dsm44/empleados/reporte-asistencia-empleado?id_empleado=8000&fechaInicio=01/01/2025&fechaFin=02/01/2025
+        return await this.repoAsistencia
+            .createQueryBuilder("a")
+            .select([
+                "COUNT(a.id_empleado) as total_asistencias",
+            ])
+            .where("a.id_empleado = :id",{ id: id_empleado })
+            .andWhere("a.fecha BETWEEN :inicio AND :fin",{ inicio: fechaInicio, fin: fechaFin })
+            .getRawOne();
     }
 
+    async getNomina( id_empleado: number, fechaInicio: string, fechaFin: string ){
+        const inicio = this.convertirFecha(fechaInicio);
+        const fin = this.convertirFecha(fechaFin);
+        const empleado = await this.findOneEmpleado(id_empleado);
+        const asistencias = await this.repoAsistencia.find({
+            where: { empleado, horaEntrada: Between(inicio, fin) }
+        });
+        const diasTrabajados = asistencias.length;
+        const total = diasTrabajados * empleado.salarioDiario;
+        return { diasTrabajados, asistencias, total };
+    }
+
+    async getDiasTrabajados( id_empleado: number, fechaInicio: string, fechaFin: string ){
+        return await this.repoAsistencia
+            .createQueryBuilder("a")
+            .select([
+                "a.id_reg_a",
+                "a.fecha",
+                "a.horaEntrada",
+                "a.horaSalida"
+            ])
+            .where("a.id_empleado = :id",{ id: id_empleado })
+            .andWhere("a.fecha BETWEEN :inicio AND :fin",{ inicio: fechaInicio, fin: fechaFin })
+            .orderBy("a.id_reg_a","DESC")
+            .getRawMany();
+    }
+
+    async getReporteAsistencia( id_empleado: number, fechaInicio: string, fechaFin: string ){
+        const data = await this.repoAsistencia
+            .createQueryBuilder("a")
+            .leftJoin("a.empleado", "e")
+            .select([
+                "a.id_reg_a",
+                "a.fecha",
+                "a.horaEntrada",
+                "a.horaSalida",
+                "a.turno",
+                "e.id_empleado",
+                "e.nombre",
+                "e.apellido_p",
+                "e.apellido_m",
+            ])
+            .where("a.id_empleado = :id",{ id: id_empleado })
+            .andWhere("a.fecha BETWEEN :inicio AND :fin",{ inicio: fechaInicio, fin: fechaFin })
+            .orderBy("a.fecha","DESC")
+            .getRawMany();
+
+        return { total: data.length, data };
+    }
+
+    async getReporteProduccion( id_empleado: number, fechaInicio: string, fechaFin: string ){
+        return await this.repoProduccion
+            .createQueryBuilder("p")
+            .leftJoin("p.empleado", "e")
+            .select([
+                "p.id_reg_p",
+                "p.fecha",
+                "p.turno",
+                "p.unidadesProducidas",
+                "e.id_empleado",
+                "e.nombre",
+                "e.apellido_p",
+                "e.apellido_m"
+            ])
+            .where("p.id_empleado = :id",{ id: id_empleado })
+            .andWhere("p.fecha BETWEEN :inicio AND :fin",{ inicio: fechaInicio, fin: fechaFin })
+            .orderBy("p.fecha","DESC")
+            .getRawMany();
+    }
+
+    async getReporteHorasTrabajadas( id_empleado:number, fechaInicio: string, fechaFin: string ){
+        return await this.repoAsistencia
+            .createQueryBuilder("a")
+            .leftJoin("a.empleado", "e")
+            .select([
+                "a.id_reg_a",
+                "a.fecha",
+                "a.turno",
+                "a.horasTrabajadas",
+                "e.nombre",
+                "e.apellido_p",
+                "e.apellido_m"
+            ])
+            .where("a.id_empleado = :id",{ id: id_empleado })
+            .andWhere("a.fecha BETWEEN :inicio AND :fin",{ inicio: fechaInicio, fin: fechaFin })
+            .orderBy("a.fecha","DESC")
+            .getRawMany();
+    }
+
+    async getProduccionTotal( id_empleado: number, fechaInicio: string, fechaFin: string ){
+        const empleado = this.findOneEmpleado(id_empleado);
+        const total = await this.repoProduccion
+            .createQueryBuilder("p")
+            .innerJoin("p.empleado", "e")
+            .select([
+                "SUM(p.unidadesProducidas) as total_producido",
+            ])
+            .where("p.id_empleado = :id",{ id: id_empleado })
+            .andWhere("p.fecha BETWEEN :inicio AND :fin",{ inicio: fechaInicio, fin: fechaFin })
+            .getRawMany();
+        return { empleado, total };
+    }
 }

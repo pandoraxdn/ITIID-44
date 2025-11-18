@@ -25,13 +25,76 @@ export class EmpleadosController {
         return this.empleadosService.createRegistroProduccion(data);
     }
 
+    @Get("asistencia-empleado")
+    getAsistencia(
+        @Query('id_empleado')   id_empleado: number,
+        @Query('fechaInicio')   fechaInicio: string,
+        @Query('fechaFin')      fechaFin: string,
+    ){
+        return this.empleadosService.getAsistencia(id_empleado,fechaInicio,fechaFin);
+    }
+
+    @Get("nomina")
+    getNomina(
+        @Query('id_empleado')   id_empleado: number,
+        @Query('fechaInicio')   fechaInicio: string,
+        @Query('fechaFin')      fechaFin: string,
+    ){
+        return this.empleadosService.getNomina(id_empleado,fechaInicio,fechaFin);
+    }
+
+    @Get("dias-trabajados")
+    getDiasTrabajados(
+        @Query('id_empleado')   id_empleado: number,
+        @Query('fechaInicio')   fechaInicio: string,
+        @Query('fechaFin')      fechaFin: string,
+    ){
+        return this.empleadosService.getDiasTrabajados(id_empleado,fechaInicio,fechaFin);
+    }
+
+    @Get("reporte-asistencia-empleado")
+    getReporteAsistencia(
+        @Query('id_empleado')   id_empleado: number,
+        @Query('fechaInicio')   fechaInicio: string,
+        @Query('fechaFin')      fechaFin: string,
+    ){
+        return this.empleadosService.getReporteAsistencia(id_empleado,fechaInicio,fechaFin);
+    }
+
+    @Get("reporte-produccion")
+    getReporteProduccion(
+        @Query('id_empleado')   id_empleado: number,
+        @Query('fechaInicio')   fechaInicio: string,
+        @Query('fechaFin')      fechaFin: string,
+    ){
+        return this.empleadosService.getReporteProduccion(id_empleado,fechaInicio,fechaFin);
+    }
+
+    @Get("horas-trabajadas")
+    getReporteHorasTrabajadas(
+        @Query('id_empleado')   id_empleado: number,
+        @Query('fechaInicio')   fechaInicio: string,
+        @Query('fechaFin')      fechaFin: string,
+    ){
+        return this.empleadosService.getReporteHorasTrabajadas(id_empleado,fechaInicio,fechaFin);
+    }
+
+    @Get("unidades-producidas")
+    getProduccionTotal(
+        @Query('id_empleado')   id_empleado: number,
+        @Query('fechaInicio')   fechaInicio: string,
+        @Query('fechaFin')      fechaFin: string,
+    ){
+        return this.empleadosService.getProduccionTotal(id_empleado,fechaInicio,fechaFin);
+    }
+
     @Get()
     async findAll(
         @Query('page') page: number = 1,
         @Query('limit') limit: number = 10,
         @Req() req: express.Request
     ) {
-        const baseUrl = `${req.protocol}://${req.host}${req.baseUrl}/api/dsm44/empleado/paginate`;
+        const baseUrl = `${req.protocol}://${req.host}${req.baseUrl}/api/dsm44/empleados`;
 
         return this.empleadosService.findAllEmpleado(Number(page), Number(limit), baseUrl);
     }
@@ -66,10 +129,4 @@ export class EmpleadosController {
         return this.createProduccion(id_empleado, unidadesProducidas);
     }
 
-    @Get("asistenciadiaria")
-    asistenciaDiaria(
-        @Query('fecha') fecha: Date = new Date(),
-    ){
-        return this.empleadosService.asistenciaDiaria( fecha );
-    }
 }
