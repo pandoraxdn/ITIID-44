@@ -13,13 +13,13 @@ interface Props {
 const BtnDrawer = ( { title, navigate } : Props ) => {
     return(
         <TouchableOpacity
-            onPress={ () => navigate }
+            onPress={ navigate }
         >
             <View
-                style={appTheme.menuBtn}
+                style={ appTheme.menuBtn }
             >
                 <Text
-                    style={appTheme.textBtn}
+                    style={ appTheme.textBtn }
                 >
                     { title }
                 </Text>
