@@ -10,6 +10,8 @@ import { SettingsScreen } from "../screens/SettingsScreen";
 import { LoginScreen } from "../screens/user/LoginScreen";
 import { GraficosScreen } from "../screens/char/GraficosScreen";
 import { SensorData } from "../screens/char/SensorData";
+import { LocationScreen } from "../screens/LocationScreen";
+import { QrScannerScreen } from "../screens/QrScannerScreen";
 
 export type RootDrawerNavigator = {
     StackNav:           undefined;
@@ -20,6 +22,8 @@ export type RootDrawerNavigator = {
     SettingsScreen:     undefined;
     GraficosScreen:     undefined;
     SensorData:         undefined;
+    LocationScreen:     undefined;
+    QrScannerScreen:     undefined;
 }
 
 const Navigator = () => {
@@ -29,7 +33,7 @@ const Navigator = () => {
 
     return( 
         <Drawer.Navigator
-            initialRouteName="PokemonNavigator"
+            initialRouteName="QrScannerScreen"
             screenOptions={{
                 headerShown: true,
                 drawerType: width >= 768 ? "permanent" : "front",
@@ -72,6 +76,14 @@ const Navigator = () => {
             <Drawer.Screen
                 name="SensorData"
                 component={SensorData}
+            />
+            <Drawer.Screen
+                name="LocationScreen"
+                component={LocationScreen}
+            />
+            <Drawer.Screen
+                name="QrScannerScreen"
+                component={QrScannerScreen}
             />
         </Drawer.Navigator>
     );
