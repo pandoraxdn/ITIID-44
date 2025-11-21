@@ -28,7 +28,7 @@ export const QrScannerScreen = () => {
 
     return(
         <View
-            style={ appTheme.marginGlobal }
+            style={{ width: "100%", height: "100%" }}
         >
             <CameraView
                 barcodeScannerSettings={{
